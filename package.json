@@ -1,0 +1,22 @@
+{
+  "name": "ui-automation-playwright-automationexercise",
+  "version": "1.0.0",
+  "description": "Automation framework using playwright and Javascript",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/intiser321/ui-automation-playwright-AutomationExercise.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/intiser321/ui-automation-playwright-AutomationExercise/issues"
+  },
+  "homepage": "https://github.com/intiser321/ui-automation-playwright-AutomationExercise#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0"
+  }
+}

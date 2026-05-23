@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "Automation framework using playwright and Javascript",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:chromium": "playwright test --project=chromium",
+    "test:list": "playwright test --list",
+    "browsers:install": "playwright install",
+    "report": "playwright show-report",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/intiser321/ui-automation-playwright-AutomationExercise.git"
@@ -17,6 +26,8 @@
   "homepage": "https://github.com/intiser321/ui-automation-playwright-AutomationExercise#readme",
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "@types/node": "^25.6.0"
+    "@types/node": "^25.6.0",
+    "allure-commandline": "^2.41.0",
+    "allure-playwright": "^3.9.0"
   }
 }

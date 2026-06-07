@@ -1,0 +1,152 @@
+import { expect } from "@playwright/test";
+
+class SignupAndLoginPage {
+  constructor(page) {
+    this.page = page;
+    //locators
+    this.registrationheading = page.getByRole("heading", {
+      name: "New User Signup!",
+    });
+    this.loginheading = page.getByRole("heading", {
+      name: "Login to your account",
+    });
+    this.loginEmailInput = page.locator("//input[@data-qa='login-email']");
+    this.signupEmailInput = page.locator("//input[@data-qa='signup-email']");
+    this.loginPasswordInput = page.locator(
+      "//input[@data-qa='login-password']",
+    );
+    this.signupNameInput = page.locator("//input[@data-qa='signup-name']");
+    this.loginBtn = page.locator("//button[@data-qa='login-button']");
+    this.signUpBtn = page.locator("//button[@data-qa='signup-button']");
+
+    //After sign up, the account information page
+    this.accountInfoHeader = page.getByRole("heading", {
+      name: "Enter Account Information",
+    });
+    this.accountNameInput = page.locator('[data-qa="name"]');
+    this.accountEmailInput = page.locator('[data-qa="email"]');
+    this.accountPasswordInput = page.locator('[data-qa="password"]');
+
+    //dropdown
+    this.dayDropdown = page.locator('[data-qa="days"]');
+    this.monthDropdown = page.locator('[data-qa="months"]');
+    this.yearDropdown = page.locator('[data-qa="years"]');
+
+    //checkboxes
+    this.newsLetterCheckbox = page.getByRole("checkbox", {
+      name: "Sign up for our newsletter!",
+    });
+    this.specialOfferCheckbox = page.getByRole("checkbox", {
+      name: "Receive special offers from our partners!",
+    });
+    //Address section
+    this.firstNameInput = page.getByRole("textbox", { name: "First name *" });
+    this.lastNameInput = page.getByRole("textbox", { name: "Last name *" });
+    this.companyInput = page.getByLabel("Company", { exact: true });
+    this.addressOne = page.locator('[data-qa="address"]');
+    this.addressTwo = page.locator('[data-qa="address2"]');
+    this.countryDropdown = page.getByRole("combobox", { name: "Country *" });
+    this.stateInput = page.getByRole("textbox", { name: "State *" });
+    this.cityInput = page.getByRole("textbox", { name: "City *" });
+    this.zipcodeInput = page.locator('[data-qa="zipcode"]');
+    this.mobileInput = page.locator('[data-qa="mobile_number"]');
+    this.createAccBtn = page.getByRole("button", { name: "Create Account" });
+
+    //after account creation
+    this.accCreationConfirmationHeading = page.getByRole("heading", {
+      name: "Account Created!",
+    });
+    this.continueBtn = page.locator('[data-qa="continue-button"]');
+    this.deleteAccBtn = page.getByRole("link", { name: "Delete Account" });
+    this.deleteAccConfirmation = page.getByRole("heading", {
+      name: "Account Deleted!",
+    });
+  }
+
+  async expectSignupPageVisible() {
+    await expect(this.registrationheading).toBeVisible();
+  }
+
+  async expectLoginPageVisible() {
+    await expect(this.loginheading).toBeVisible();
+  }
+  async inputSignupEmail(signupEmail) {
+    await this.signupEmailInput.fill(signupEmail);
+  }
+  async inputSignupName(signupName) {
+    await this.signupNameInput.fill(signupName);
+  }
+  async signup(email, name) {
+    await this.inputSignupEmail(email);
+    await this.inputSignupName(name);
+    await this.signUpBtn.click();
+  }
+  async expectAccInfoHeaderVisible() {
+    await expect(this.accountInfoHeader).toBeVisible();
+  }
+  async selectTitle(title) {
+    await this.page.getByRole("radio", { name: title }).check(); //title will be taken from testdata
+  }
+  async expectTitleSelected(title) {
+    await expect(this.page.getByRole("radio", { name: title })).toBeChecked(); //title will be taken from testdata
+  }
+
+  async expectNameAndEmailInAccInfoPage(name, email) {
+    await expect(this.accountEmailInput).toHaveValue(email);
+    await expect(this.accountNameInput).toHaveValue(name);
+    await expect(this.accountEmailInput).toBeDisabled();
+  }
+  async inputPassword(password) {
+    await this.accountPasswordInput.fill(password);
+  }
+  async selectDateOfBirth(day, month, year) {
+    await this.dayDropdown.selectOption(day);
+    await this.monthDropdown.selectOption(month);
+    await this.yearDropdown.selectOption(year);
+  }
+  async selectCheckboxes() {
+    await this.newsLetterCheckbox.check();
+    await this.specialOfferCheckbox.check();
+  }
+  async expectCheckboxesSelected() {
+    await expect(this.newsLetterCheckbox).toBeChecked();
+    await expect(this.specialOfferCheckbox).toBeChecked();
+  }
+  async fillAddressDetails(info) {
+    await this.firstNameInput.fill(info.firstName);
+    await this.lastNameInput.fill(info.lastName);
+    await this.companyInput.fill(info.company);
+    await this.addressOne.fill(info.firstAddress);
+    await this.addressTwo.fill(info.secondAddress);
+    await this.countryDropdown.selectOption(info.country);
+    await this.stateInput.fill(info.state);
+    await this.cityInput.fill(info.city);
+    await this.zipcodeInput.fill(info.zipcode);
+    await this.mobileInput.fill(info.mobile);
+  }
+
+  async createAccount() {
+    await this.createAccBtn.click();
+  }
+  async expectAccountCreated() {
+    await expect(this.accCreationConfirmationHeading).toBeVisible();
+  }
+
+  async expectNameisVisibleAfterSignup(name) {
+    const loggedInUser = this.page.getByText(`Logged in as ${name}`, {
+      exact: true,
+    });
+    await expect(loggedInUser).toBeVisible();
+  }
+  async deleteAccount() {
+    await this.deleteAccBtn.click();
+  }
+  async expectAccountDeleted() {
+    await expect(this.deleteAccConfirmation).toBeVisible();
+  }
+
+  async clickContinueBtn() {
+    await this.continueBtn.click();
+  }
+}
+export { SignupAndLoginPage };

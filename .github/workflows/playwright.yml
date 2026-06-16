@@ -6,7 +6,7 @@ on:
     branches: [main, master]
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 90
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
@@ -20,17 +20,24 @@ jobs:
       - name: Run Playwright tests
         run: npm run test
       - name: Generate Allure report
-        if: ${{ !cancelled() }}
-        run: npm run allure:generate
+        if: ${{ always() }}
+        run: |
+          if [ -d allure-results ] && [ "$(ls -A allure-results)" ]; then
+            npm run allure:generate
+          else
+            echo "No Allure results found. Skipping Allure report generation."
+          fi
       - uses: actions/upload-artifact@v4.4.3
-        if: ${{ !cancelled() }}
+        if: ${{ always() }}
         with:
           name: playwright-report
           path: playwright-report/
+          if-no-files-found: ignore
           retention-days: 30
       - uses: actions/upload-artifact@v4.4.3
-        if: ${{ !cancelled() }}
+        if: ${{ always() }}
         with:
           name: allure-report
           path: allure-report/
+          if-no-files-found: ignore
           retention-days: 30

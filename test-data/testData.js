@@ -21,6 +21,17 @@ const testData = {
     zipcode: "1210",
     mobile: "9998887776",
   },
+  userLogin: {
+    validLogin: {
+      validEmail: "itsavalidemail123@gmail.com",
+      validPassword: "password",
+      name: "Sayonara",
+    },
+    invalidLogin: {
+      invalidEmail: "invalidemail@gmail.com",
+      invalidPassword: "invalid",
+    },
+  },
 };
 
 export { testData };

@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { test } from "../fixtures/accountFixture";
 import { HomePage } from "../pages/HomePage";
 import { SignupAndLoginPage } from "../pages/signupAndLoginPage";
 import { testData } from "../test-data/testData";
@@ -47,6 +47,30 @@ test.describe("Authentication (signup and login) suite", () => {
 
     await signupAndLoginPage.deleteAccount();
     await signupAndLoginPage.expectAccountDeleted();
+    await signupAndLoginPage.clickContinueBtn();
+  });
+
+  test("Test Case 2: Login User with correct email and password", async function ({
+    page,
+    registeredUser,
+  }) {
+    const homePage = new HomePage(page);
+    const signupAndLoginPage = new SignupAndLoginPage(page);
+
+    await homePage.goTo();
+    await homePage.expectHomePageVisible();
+    await homePage.clickSignupLogin();
+
+    await signupAndLoginPage.expectLoginPageVisible();
+    await signupAndLoginPage.login(
+      registeredUser.email,
+      registeredUser.password,
+    );
+    await signupAndLoginPage.expectUserIsLoggedIn(registeredUser.name);
+
+    await signupAndLoginPage.deleteAccount();
+    await signupAndLoginPage.expectAccountDeleted();
+    registeredUser.deleted = true;
     await signupAndLoginPage.clickContinueBtn();
   });
 });

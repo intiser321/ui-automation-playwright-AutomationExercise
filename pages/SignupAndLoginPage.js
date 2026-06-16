@@ -3,20 +3,13 @@ import { expect } from "@playwright/test";
 class SignupAndLoginPage {
   constructor(page) {
     this.page = page;
-    //locators
+    //locators for signup
     this.registrationheading = page.getByRole("heading", {
       name: "New User Signup!",
     });
-    this.loginheading = page.getByRole("heading", {
-      name: "Login to your account",
-    });
-    this.loginEmailInput = page.locator("//input[@data-qa='login-email']");
+
     this.signupEmailInput = page.locator("//input[@data-qa='signup-email']");
-    this.loginPasswordInput = page.locator(
-      "//input[@data-qa='login-password']",
-    );
     this.signupNameInput = page.locator("//input[@data-qa='signup-name']");
-    this.loginBtn = page.locator("//button[@data-qa='login-button']");
     this.signUpBtn = page.locator("//button[@data-qa='signup-button']");
 
     //After sign up, the account information page
@@ -61,15 +54,24 @@ class SignupAndLoginPage {
     this.deleteAccConfirmation = page.getByRole("heading", {
       name: "Account Deleted!",
     });
+
+    //locators for login
+    this.loginheading = page.getByRole("heading", {
+      name: "Login to your account",
+    });
+    this.loginEmailInput = page.locator("//input[@data-qa='login-email']");
+    this.loginPasswordInput = page.locator(
+      "//input[@data-qa='login-password']",
+    );
+    this.loginBtn = page.locator("//button[@data-qa='login-button']");
   }
+
+  //signup or registration methods
 
   async expectSignupPageVisible() {
     await expect(this.registrationheading).toBeVisible();
   }
 
-  async expectLoginPageVisible() {
-    await expect(this.loginheading).toBeVisible();
-  }
   async inputSignupEmail(signupEmail) {
     await this.signupEmailInput.fill(signupEmail);
   }
@@ -147,6 +149,33 @@ class SignupAndLoginPage {
 
   async clickContinueBtn() {
     await this.continueBtn.click();
+  }
+
+  //Login methods
+
+  async expectLoginPageVisible() {
+    await expect(this.loginheading).toBeVisible();
+  }
+
+  async inputLoginEmail(loginEmail) {
+    await this.loginEmailInput.fill(loginEmail);
+  }
+
+  async inputLoginPassword(loginPass) {
+    await this.loginPasswordInput.fill(loginPass);
+  }
+  async login(email, password) {
+    await this.inputLoginEmail(email);
+    await this.inputLoginPassword(password);
+    await this.loginBtn.click();
+  }
+
+  async expectUserIsLoggedIn(name){
+    const loggedInUser = this.page.getByText(`Logged in as ${name}`, {
+      exact: true,
+    });
+    await expect(loggedInUser).toBeVisible();
+
   }
 }
 export { SignupAndLoginPage };

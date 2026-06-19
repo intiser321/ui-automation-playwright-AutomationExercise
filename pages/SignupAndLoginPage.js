@@ -64,6 +64,18 @@ class SignupAndLoginPage {
       "//input[@data-qa='login-password']",
     );
     this.loginBtn = page.locator("//button[@data-qa='login-button']");
+
+    //validation message for invalid login
+
+    this.invalidLoginValidation = page.getByText(
+      "Your email or password is incorrect!",
+      { exact: true },
+    );
+    this.emailAlreadyExist = page.getByText("Email Address already exist!", {
+      exact: true,
+    });
+
+    this.logoutBtn = page.getByRole("link", { name: "Logout" });
   }
 
   //signup or registration methods
@@ -170,12 +182,28 @@ class SignupAndLoginPage {
     await this.loginBtn.click();
   }
 
-  async expectUserIsLoggedIn(name){
+  async expectUserIsLoggedIn(name) {
     const loggedInUser = this.page.getByText(`Logged in as ${name}`, {
       exact: true,
     });
     await expect(loggedInUser).toBeVisible();
+  }
 
+  async expectErrorMessageForInvalidLogin() {
+    await expect(this.invalidLoginValidation).toBeVisible();
+  }
+
+  async clickLogoutBtn() {
+    await this.logoutBtn.click();
+  }
+
+  async expectUserIsLoggedOut() {
+    await expect(this.loginheading).toBeVisible();
+    await expect(this.loginBtn).toBeEnabled();
+  }
+
+  async expectEmailAlreadyExistsText() {
+    await expect(this.emailAlreadyExist).toBeVisible();
   }
 }
 export { SignupAndLoginPage };

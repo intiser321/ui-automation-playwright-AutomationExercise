@@ -73,4 +73,57 @@ test.describe("Authentication (signup and login) suite", () => {
     registeredUser.deleted = true;
     await signupAndLoginPage.clickContinueBtn();
   });
+
+  test("Test Case 3: Login User with incorrect email and password", async function ({
+    page,
+  }) {
+    const homePage = new HomePage(page);
+    const signupAndLoginPage = new SignupAndLoginPage(page);
+    await homePage.goTo();
+    await homePage.expectHomePageVisible();
+    await homePage.clickSignupLogin();
+
+    await signupAndLoginPage.expectLoginPageVisible();
+    await signupAndLoginPage.login(
+      testData.userRegistration.getEmail(),
+      testData.userLogin.invalidLogin.invalidPassword,
+    );
+    await signupAndLoginPage.expectErrorMessageForInvalidLogin();
+  });
+
+  test("Test Case 4: Logout User", async function ({ page, registeredUser }) {
+    const homePage = new HomePage(page);
+    const signupAndLoginPage = new SignupAndLoginPage(page);
+
+    await homePage.goTo();
+    await homePage.expectHomePageVisible();
+    await homePage.clickSignupLogin();
+
+    await signupAndLoginPage.expectLoginPageVisible();
+    await signupAndLoginPage.login(
+      registeredUser.email,
+      registeredUser.password,
+    );
+    await signupAndLoginPage.expectUserIsLoggedIn(registeredUser.name);
+    await signupAndLoginPage.clickLogoutBtn();
+    await signupAndLoginPage.expectUserIsLoggedOut();
+  });
+  test("Test Case 5: Register User with existing email", async function ({
+    page,
+    registeredUser,
+  }) {
+    const homePage = new HomePage(page);
+    const signupAndLoginPage = new SignupAndLoginPage(page);
+
+    await homePage.goTo();
+    await homePage.expectHomePageVisible();
+    await homePage.clickSignupLogin();
+
+    await signupAndLoginPage.expectSignupPageVisible();
+    await signupAndLoginPage.signup(
+      registeredUser.email,
+      registeredUser.name,
+    );
+    await signupAndLoginPage.expectEmailAlreadyExistsText();
+  });
 });

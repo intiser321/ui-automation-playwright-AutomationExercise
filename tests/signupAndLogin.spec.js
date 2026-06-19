@@ -1,6 +1,6 @@
 import { test } from "../fixtures/accountFixture";
 import { HomePage } from "../pages/HomePage";
-import { SignupAndLoginPage } from "../pages/signupAndLoginPage";
+import { SignupAndLoginPage } from "../pages/SignupAndLoginPage";
 import { testData } from "../test-data/testData";
 
 test.describe("Authentication (signup and login) suite", () => {

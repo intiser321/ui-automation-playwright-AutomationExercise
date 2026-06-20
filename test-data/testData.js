@@ -32,6 +32,12 @@ const testData = {
       invalidPassword: "invalid",
     },
   },
+  contactUsInfo: {
+    name: "Sayo",
+    email: "sayo@gmail.com",
+    subject: "This is a test subject",
+    message: "Hello there",
+  },
 };
 
 export { testData };

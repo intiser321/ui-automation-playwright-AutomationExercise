@@ -10,7 +10,9 @@ class HomePage {
     this.homeLink = page.getByRole("link", { name: "Home" });
     this.cartLink = page.getByRole("link", { name: "Cart" });
     this.contactUsLink = page.getByRole("link", { name: "Contact us" });
-    this.testCasesLink = page.getByRole("link", { name: "Test Cases" });
+    this.testCasesLink = page
+      .locator("#header")
+      .getByRole("link", { name: "Test Cases" });
 
     // Home page sections
     this.featuresItemsHeading = page.getByRole("heading", {
@@ -63,12 +65,7 @@ class HomePage {
     await this.contactUsLink.click();
   }
 
-  async expectContactUsPageVisible() {
-    const contactUsText = this.page.getByRole("heading", {
-      name: "Contact Us",
-    });
-    await expect(contactUsText).toBeVisible();
-  }
+
 
   async clickTestCases() {
     await this.testCasesLink.click();

@@ -14,6 +14,10 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  /* Allow the CI runner time to pass the site's automatic request verification. */
+  expect: {
+    timeout: process.env.CI ? 30_000 : 5_000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

@@ -38,6 +38,21 @@ const testData = {
     subject: "This is a test subject",
     message: "Hello there",
   },
+  firstProduct: {
+    name: "Blue Top",
+    category: "Women > Tops",
+    price: "Rs. 500",
+    availability: "In Stock",
+    condition: "New",
+    brand: "Polo",
+  },
+  productSearch: {
+    term: "Blue Top",
+    expectedProducts: ["Blue Top"],
+  },
+  subscription: {
+    email: "sayo.subscription@gmail.com",
+  },
 };
 
 export { testData };

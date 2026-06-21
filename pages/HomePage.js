@@ -45,13 +45,6 @@ class HomePage {
     await this.productsLink.click();
   }
 
-  async expectProductsPageVisible() {
-    const productText = this.page.getByRole("heading", {
-      name: "All Products",
-    });
-    await expect(productText).toBeVisible();
-  }
-
   async clickCart() {
     await this.cartLink.click();
   }
@@ -64,8 +57,6 @@ class HomePage {
   async clickContactUs() {
     await this.contactUsLink.click();
   }
-
-
 
   async clickTestCases() {
     await this.testCasesLink.click();

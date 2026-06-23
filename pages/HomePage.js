@@ -49,10 +49,6 @@ class HomePage {
     await this.cartLink.click();
   }
 
-  async expectCartPageVisible() {
-    const cartText = this.page.getByText("Shopping Cart", { exact: true });
-    await expect(cartText).toBeVisible();
-  }
 
   async clickContactUs() {
     await this.contactUsLink.click();

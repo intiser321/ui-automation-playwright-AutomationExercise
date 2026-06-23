@@ -18,8 +18,10 @@ test.describe("Products Suite", () => {
     await homePage.clickProducts();
     await productPage.expectProductsPageVisible();
     await productPage.expectProductListVisible();
-    await productPage.clickFirstViewProduct();
-    await productDetailsPage.expectProductDetailPageVisible();
+    await productPage.clickViewOnAnyproduct(testData.firstProduct.id);
+    await productDetailsPage.expectProductDetailPageVisible(
+      testData.firstProduct.id,
+    );
     await productDetailsPage.expectProductInfoIsVisible(testData.firstProduct);
   });
 

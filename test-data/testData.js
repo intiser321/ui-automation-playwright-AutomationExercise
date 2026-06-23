@@ -39,6 +39,7 @@ const testData = {
     message: "Hello there",
   },
   firstProduct: {
+    id: 1,
     name: "Blue Top",
     category: "Women > Tops",
     price: "Rs. 500",
@@ -46,12 +47,43 @@ const testData = {
     condition: "New",
     brand: "Polo",
   },
+  anyProduct: {
+    id: 4,
+    name: "Stylish Dress",
+    quantity: 4,
+  },
   productSearch: {
     term: "Blue Top",
     expectedProducts: ["Blue Top"],
   },
+  cartProducts: [
+    {
+      id: 1,
+      name: "Blue Top",
+      price: "Rs. 500",
+      quantity: "1",
+      total: "Rs. 500",
+    },
+    {
+      id: 2,
+      name: "Men Tshirt",
+      price: "Rs. 400",
+      quantity: "1",
+      total: "Rs. 400",
+    },
+  ],
   subscription: {
     email: "sayo.subscription@gmail.com",
+  },
+  checkout: {
+    comment: "Please deliver this order carefully.",
+  },
+  payment: {
+    nameOnCard: "Sayoo Nara",
+    cardNumber: "4111111111111111",
+    cvc: "123",
+    expiryMonth: "12",
+    expiryYear: "2030",
   },
 };
 

@@ -1,6 +1,7 @@
 import { test } from "@playwright/test";
 import { HomePage } from "../pages/HomePage";
 import { testData } from "../test-data/testData";
+import { CartPage } from "../pages/CartPage";
 
 test.describe("Subscription Suite", () => {
   test("Test Case 10: Verify Subscription in home page", async function ({
@@ -20,11 +21,12 @@ test.describe("Subscription Suite", () => {
     page,
   }) {
     const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
 
     await homePage.goTo();
     await homePage.expectHomePageVisible();
     await homePage.clickCart();
-    await homePage.expectCartPageVisible();
+    await cartPage.expectCartPageVisible();
     await homePage.scrollToSubscription();
     await homePage.expectSubscriptionVisible();
     await homePage.subscribe(testData.subscription.email);

@@ -19,6 +19,17 @@ async function cleanupAccount(accountApi, user) {
 }
 
 const test = base.extend({
+  newUser: async function newUserFixture({ request }, use) {
+    const accountApi = new AccountApi(request);
+    const user = buildRegisteredUser();
+
+    try {
+      await use(user);
+    } finally {
+      await cleanupAccount(accountApi, user);
+    }
+  },
+
   registeredUser: async function registeredUserFixture({ request }, use) {
     const accountApi = new AccountApi(request);
     const user = buildRegisteredUser();

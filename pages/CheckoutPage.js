@@ -22,26 +22,45 @@ class CheckoutPage {
   }
 
   async expectDeliveryAndBillingAddresses(expectedAddress) {
-    await expect(this.deliveryAddress).toBeVisible();
-    await expect(this.billingAddress).toBeVisible();
+    await this.expectDeliveryAddressMatches(expectedAddress);
+    await this.expectBillingAddressMatches(expectedAddress);
+  }
 
-    const expectedAddressValues = [
-      expectedAddress.firstName,
-      expectedAddress.lastName,
+  async expectDeliveryAddressMatches(expectedAddress) {
+    await this.expectAddressMatches(this.deliveryAddress, expectedAddress);
+  }
+
+  async expectBillingAddressMatches(expectedAddress) {
+    await this.expectAddressMatches(this.billingAddress, expectedAddress);
+  }
+
+  async expectAddressMatches(addressContainer, expectedAddress) {
+    await expect(addressContainer).toBeVisible();
+    await expect(
+      addressContainer.locator(".address_firstname.address_lastname"),
+    ).toHaveText(
+      `${expectedAddress.title} ${expectedAddress.firstName} ${expectedAddress.lastName}`,
+    );
+    await expect(
+      addressContainer.locator(".address_address1.address_address2"),
+    ).toHaveText([
       expectedAddress.company,
       expectedAddress.firstAddress,
       expectedAddress.secondAddress,
-      expectedAddress.city,
-      expectedAddress.state,
-      expectedAddress.zipcode,
+    ]);
+    await expect(
+      addressContainer.locator(
+        ".address_city.address_state_name.address_postcode",
+      ),
+    ).toHaveText(
+      `${expectedAddress.city} ${expectedAddress.state} ${expectedAddress.zipcode}`,
+    );
+    await expect(addressContainer.locator(".address_country_name")).toHaveText(
       expectedAddress.country,
+    );
+    await expect(addressContainer.locator(".address_phone")).toHaveText(
       expectedAddress.mobile,
-    ];
-
-    for (const value of expectedAddressValues) {
-      await expect(this.deliveryAddress).toContainText(value);
-      await expect(this.billingAddress).toContainText(value);
-    }
+    );
   }
 
   async expectReviewOrderVisible() {

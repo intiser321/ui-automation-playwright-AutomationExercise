@@ -18,6 +18,9 @@ class HomePage {
     this.featuresItemsHeading = page.getByRole("heading", {
       name: "Features Items",
     });
+    this.heroHeading = page.getByRole("heading", {
+      name: "Full-Fledged practice website for Automation Engineers",
+    });
     this.subscriptionHeading = page.getByRole("heading", {
       name: "Subscription",
     });
@@ -26,6 +29,18 @@ class HomePage {
     this.subscriptionSuccessMessage = page.getByText(
       "You have been successfully subscribed!",
     );
+    this.recommendedItemsHeading = page.getByRole("heading", {
+      name: "recommended items",
+    });
+    this.recommendedItemsCarousel = page.locator("#recommended-item-carousel");
+    this.recommendedItemsNextButton = this.recommendedItemsCarousel.locator(
+      ".right.recommended-item-control",
+    );
+    this.cartModal = page.locator("#cartModal");
+    this.viewCartLink = this.cartModal.getByRole("link", {
+      name: "View Cart",
+    });
+    this.scrollUpButton = page.locator("#scrollUp");
   }
 
   async goTo() {
@@ -74,6 +89,10 @@ class HomePage {
     await expect(this.subscriptionEmailInput).toBeVisible();
   }
 
+  async expectSubscriptionInViewport() {
+    await expect(this.subscriptionHeading).toBeInViewport();
+  }
+
   async subscribe(email) {
     await this.subscriptionEmailInput.fill(email);
     await this.subscribeButton.click();
@@ -81,6 +100,48 @@ class HomePage {
 
   async expectSubscriptionSuccessVisible() {
     await expect(this.subscriptionSuccessMessage).toBeVisible();
+  }
+
+  async scrollToRecommendedItems() {
+    await this.recommendedItemsHeading.scrollIntoViewIfNeeded();
+  }
+
+  async expectRecommendedItemsVisible() {
+    await expect(this.recommendedItemsHeading).toBeVisible();
+    await expect(this.recommendedItemsCarousel).toBeVisible();
+  }
+
+  async addRecommendedProductToCart(productId) {
+    const addToCartButton = this.recommendedItemsCarousel.locator(
+      `.add-to-cart[data-product-id="${productId}"]`,
+    );
+
+    await this.recommendedItemsCarousel.hover();
+
+    if (!(await addToCartButton.isVisible())) {
+      await this.recommendedItemsNextButton.click();
+    }
+
+    await expect(addToCartButton).toBeVisible();
+    await addToCartButton.click();
+    await expect(this.cartModal).toBeVisible();
+  }
+
+  async clickViewCartFromModal() {
+    await this.viewCartLink.click();
+  }
+
+  async clickScrollUpButton() {
+    await expect(this.scrollUpButton).toBeVisible();
+    await this.scrollUpButton.click();
+  }
+
+  async expectHeroSectionInViewport() {
+    await expect(this.heroHeading).toBeInViewport();
+  }
+
+  async scrollToTopWithoutArrow() {
+    await this.page.evaluate(() => window.scrollTo(0, 0));
   }
 }
 export { HomePage };

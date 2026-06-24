@@ -54,6 +54,12 @@ class ProductPage {
     }
   }
 
+  async expectMultipleProductsVisible() {
+    const productCount = await this.productCards.count();
+
+    expect(productCount).toBeGreaterThan(1);
+  }
+
   async addProductToCartByHovering(productIndex) {
     const product = this.productCards.nth(productIndex);
     const productArea = product.locator(".single-products");
@@ -63,6 +69,25 @@ class ProductPage {
     await expect(overlay).toBeVisible();
     await overlay.locator(".add-to-cart").click();
     await expect(this.cartModal).toBeVisible();
+  }
+
+  async addProductToCart(productIndex) {
+    const product = this.productCards.nth(productIndex);
+    const addToCartButton = product.locator(".productinfo .add-to-cart");
+
+    await addToCartButton.click();
+    await expect(this.cartModal).toBeVisible();
+  }
+
+  async addAllProductsToCart() {
+    const productCount = await this.productCards.count();
+
+    expect(productCount).toBeGreaterThan(0);
+
+    for (let index = 0; index < productCount; index++) {
+      await this.addProductToCart(index);
+      await this.continueShopping();
+    }
   }
 
   async continueShopping() {

@@ -21,6 +21,18 @@ class ProductDetailsPage {
     this.quantityInput = page.locator("#quantity");
     this.addToCartBtn = page.getByRole("button", { name: "Add to cart" });
     this.cartModal = page.locator("#cartModal");
+    this.writeReviewLink = page.getByRole("link", {
+      name: "Write Your Review",
+    });
+    this.reviewNameInput = page.getByPlaceholder("Your Name");
+    this.reviewEmailInput = page.getByPlaceholder("Email Address", {
+      exact: true,
+    });
+    this.reviewTextInput = page.getByPlaceholder("Add Review Here!");
+    this.submitReviewButton = page.getByRole("button", { name: "Submit" });
+    this.reviewSuccessMessage = page.getByText("Thank you for your review.", {
+      exact: true,
+    });
   }
   async expectProductDetailPageVisible(productId) {
     await expect(this.productDetails).toBeVisible();
@@ -45,6 +57,24 @@ class ProductDetailsPage {
   async clickAddToCartBtn() {
     await this.addToCartBtn.click();
     await expect(this.cartModal).toBeVisible();
+  }
+
+  async expectReviewSectionVisible() {
+    await expect(this.writeReviewLink).toBeVisible();
+    await expect(this.reviewNameInput).toBeVisible();
+    await expect(this.reviewEmailInput).toBeVisible();
+    await expect(this.reviewTextInput).toBeVisible();
+  }
+
+  async submitReview(review) {
+    await this.reviewNameInput.fill(review.name);
+    await this.reviewEmailInput.fill(review.email);
+    await this.reviewTextInput.fill(review.message);
+    await this.submitReviewButton.click();
+  }
+
+  async expectReviewSubmittedSuccessfully() {
+    await expect(this.reviewSuccessMessage).toBeVisible();
   }
 }
 export { ProductDetailsPage };

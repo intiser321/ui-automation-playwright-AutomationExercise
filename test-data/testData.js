@@ -52,9 +52,74 @@ const testData = {
     name: "Stylish Dress",
     quantity: 4,
   },
-  productSearch: {
+  singleProductSearch: {
     term: "Blue Top",
     expectedProducts: ["Blue Top"],
+  },
+  multipleProductSearch: {
+    term: "White",
+    expectedProducts: [
+      "Summer White Top",
+      "Sleeves Printed Top - White",
+      "Printed Off Shoulder Top - White",
+    ],
+    expectedCartProducts: [
+      {
+        id: 6,
+        name: "Summer White Top",
+        price: "Rs. 400",
+        quantity: "1",
+        total: "Rs. 400",
+      },
+      {
+        id: 11,
+        name: "Sleeves Printed Top - White",
+        price: "Rs. 499",
+        quantity: "1",
+        total: "Rs. 499",
+      },
+      {
+        id: 15,
+        name: "Printed Off Shoulder Top - White",
+        price: "Rs. 315",
+        quantity: "1",
+        total: "Rs. 315",
+      },
+    ],
+  },
+  productReview: {
+    name: "Sayo",
+    email: "sayo.review@example.com",
+    message: "This is a test product review submitted through Playwright.",
+  },
+  recommendedProduct: {
+    id: 4,
+    name: "Stylish Dress",
+    price: "Rs. 1500",
+    quantity: "1",
+    total: "Rs. 1500",
+  },
+  categoryProducts: {
+    women: {
+      parent: "Women",
+      subcategory: "Dress",
+      id: 1,
+    },
+    men: {
+      parent: "Men",
+      subcategory: "Tshirts",
+      id: 3,
+    },
+  },
+  brandProducts: {
+    first: {
+      name: "Polo",
+      path: "/brand_products/Polo",
+    },
+    second: {
+      name: "Biba",
+      path: "/brand_products/Biba",
+    },
   },
   cartProducts: [
     {
@@ -84,6 +149,9 @@ const testData = {
     cvc: "123",
     expiryMonth: "12",
     expiryYear: "2030",
+  },
+  invoice: {
+    fileName: "invoice.txt",
   },
 };
 

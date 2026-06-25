@@ -40,8 +40,8 @@ if errorlevel 1 (
 )
 
 echo.
-echo Running the full cross-browser suite...
-call npm.cmd run test:parallel
+echo Running the full cross-browser suite in headed mode...
+call npm.cmd run test:headed
 set TEST_EXIT_CODE=%ERRORLEVEL%
 
 echo.

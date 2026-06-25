@@ -16,7 +16,7 @@ An end-to-end UI automation framework for [Automation Exercise](https://automati
 - Failure artifacts captured through Playwright screenshots, videos, and traces
 - Playwright HTML and Allure reporting
 - Controlled parallel execution locally and in CI
-- Built-in handling for common public-site ad and interstitial interruptions
+- Built-in handling for common public-site ad, interstitial, and headed-browser interruptions
 - Automated execution through GitHub Actions
 
 ## Test coverage
@@ -94,7 +94,7 @@ On Windows, double-click:
 run-tests.cmd
 ```
 
-The runner installs dependencies if needed, ensures Playwright browsers are available, runs the full cross-browser suite, and offers to open the HTML report when the run finishes.
+The runner installs dependencies if needed, ensures Playwright browsers are available, runs the full cross-browser suite in headed mode, and offers to open the HTML report when the run finishes.
 
 If you use VS Code, you can also run the suite without typing commands:
 
@@ -127,6 +127,8 @@ Run tests with a visible browser:
 ```bash
 npm run test:headed
 ```
+
+The headed run uses three workers by default so Chromium, Firefox, and WebKit can run efficiently without overwhelming the public demo website.
 
 List the discovered tests without executing them:
 
@@ -185,7 +187,7 @@ The manual live E2E job uses three workers by default and retries failed tests t
 
 ## External site limitation
 
-Automation Exercise is a third-party public practice website. It can show advertisements, Google vignette/interstitial pages, temporary request verification screens, or occasional server errors. The framework includes ad-domain blocking, overlay dismissal, navigation waits, and limited retry logic to reduce this noise during local runs.
+Automation Exercise is a third-party public practice website. It can show advertisements, Google vignette/interstitial pages, temporary request verification screens, or occasional server errors. The framework includes ad-domain blocking, overlay dismissal, navigation waits, headed-browser interaction safeguards, and limited retry logic to reduce this noise during local runs.
 
 Even with those safeguards, GitHub-hosted runners may occasionally be blocked or rate-limited by the external website. For that reason, push/PR CI validates the framework and test discovery, while the full live browser suite is kept as an on-demand run with downloadable reports.
 

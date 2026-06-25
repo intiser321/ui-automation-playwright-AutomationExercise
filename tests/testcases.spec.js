@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures/baseFixture";
 import { HomePage } from "../pages/HomePage";
 
 test("Test Case 7: Verify Test Cases Page", async function ({ page }) {

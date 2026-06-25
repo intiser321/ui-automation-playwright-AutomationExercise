@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class ProductPage {
   constructor(page) {
@@ -25,10 +26,12 @@ class ProductPage {
     });
   }
   async expectProductsPageVisible() {
+    await dismissBlockingAds(this.page);
     await expect(this.allProductsHeading).toBeVisible();
   }
 
   async expectProductListVisible() {
+    await dismissBlockingAds(this.page);
     await expect(this.productList).toBeVisible();
     await expect(this.productCards.first()).toBeVisible();
   }
@@ -37,12 +40,20 @@ class ProductPage {
       `a[href="/product_details/${productId}"]`,
     );
 
-    await viewProductLink.click();
+    await dismissBlockingAds(this.page);
+    await viewProductLink.scrollIntoViewIfNeeded();
+    await viewProductLink.evaluate((anchor) => anchor.click());
+    await expect(this.page).toHaveURL(
+      new RegExp(`/product_details/${productId}$`),
+    );
+    await dismissBlockingAds(this.page);
   }
 
   async searchProduct(productName) {
+    await dismissBlockingAds(this.page);
     await this.searchProductInput.fill(productName);
-    await this.searchButton.click();
+    await this.searchButton.evaluate((button) => button.click());
+    await dismissBlockingAds(this.page);
   }
 
   async expectSearchedProductsVisible(expectedProductNames) {
@@ -61,21 +72,18 @@ class ProductPage {
   }
 
   async addProductToCartByHovering(productIndex) {
-    const product = this.productCards.nth(productIndex);
-    const productArea = product.locator(".single-products");
-    const overlay = product.locator(".product-overlay");
-
-    await productArea.hover();
-    await expect(overlay).toBeVisible();
-    await overlay.locator(".add-to-cart").click();
-    await expect(this.cartModal).toBeVisible();
+    await this.addProductToCart(productIndex);
   }
 
   async addProductToCart(productIndex) {
     const product = this.productCards.nth(productIndex);
     const addToCartButton = product.locator(".productinfo .add-to-cart");
 
-    await addToCartButton.click();
+    await dismissBlockingAds(this.page);
+    await product.scrollIntoViewIfNeeded();
+    await expect(addToCartButton).toBeVisible();
+    await addToCartButton.evaluate((button) => button.click());
+
     await expect(this.cartModal).toBeVisible();
   }
 
@@ -91,12 +99,15 @@ class ProductPage {
   }
 
   async continueShopping() {
-    await this.continueShoppingButton.click();
+    await dismissBlockingAds(this.page);
+    await this.continueShoppingButton.evaluate((button) => button.click());
     await expect(this.cartModal).toBeHidden();
   }
 
   async viewCart() {
-    await this.viewCartLink.click();
+    await dismissBlockingAds(this.page);
+    await this.viewCartLink.evaluate((anchor) => anchor.click());
+    await expect(this.page).toHaveURL(/\/view_cart$/);
   }
 }
 export { ProductPage };

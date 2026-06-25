@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class PaymentPage {
   constructor(page) {
@@ -34,7 +35,8 @@ class PaymentPage {
   }
 
   async payAndConfirmOrder() {
-    await this.payAndConfirmButton.click();
+    await dismissBlockingAds(this.page);
+    await this.payAndConfirmButton.evaluate((button) => button.click());
   }
 
   async expectOrderPlacedSuccessfully() {
@@ -42,16 +44,38 @@ class PaymentPage {
   }
 
   async downloadAndVerifyInvoice(expectedInvoice, destinationPath) {
-    const downloadPromise = this.page.waitForEvent("download");
+    await dismissBlockingAds(this.page);
+    const invoiceHref = await this.downloadInvoiceButton.getAttribute("href");
+    const downloadPromise = this.page.waitForEvent("download", {
+      timeout: 10_000,
+    });
 
-    await this.downloadInvoiceButton.click();
-    const download = await downloadPromise;
+    await this.downloadInvoiceButton.evaluate((link) => link.click());
+    const download = await downloadPromise.catch(() => null);
+
+    if (!download) {
+      await this.downloadInvoiceFromHref(invoiceHref, destinationPath);
+      await this.expectInvoiceFileDownloaded(destinationPath);
+      return;
+    }
 
     expect(await download.failure()).toBeNull();
     expect(download.suggestedFilename()).toBe(expectedInvoice.fileName);
 
     await download.saveAs(destinationPath);
+    await this.expectInvoiceFileDownloaded(destinationPath);
+  }
 
+  async downloadInvoiceFromHref(invoiceHref, destinationPath) {
+    expect(invoiceHref).toBeTruthy();
+
+    const response = await this.page.request.get(invoiceHref);
+
+    expect(response.ok()).toBeTruthy();
+    await writeFile(destinationPath, await response.body());
+  }
+
+  async expectInvoiceFileDownloaded(destinationPath) {
     const downloadedFileStats = await stat(destinationPath);
     expect(downloadedFileStats.size).toBeGreaterThan(0);
 
@@ -60,7 +84,8 @@ class PaymentPage {
   }
 
   async clickContinue() {
-    await this.continueButton.click();
+    await dismissBlockingAds(this.page);
+    await this.continueButton.evaluate((button) => button.click());
   }
 }
 

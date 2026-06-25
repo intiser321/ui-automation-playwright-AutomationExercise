@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class SignupAndLoginPage {
   constructor(page) {
@@ -91,9 +92,10 @@ class SignupAndLoginPage {
     await this.signupNameInput.fill(signupName);
   }
   async signup(email, name) {
+    await dismissBlockingAds(this.page);
     await this.inputSignupEmail(email);
     await this.inputSignupName(name);
-    await this.signUpBtn.click();
+    await this.signUpBtn.evaluate((button) => button.click());
   }
   async expectAccInfoHeaderVisible() {
     await expect(this.accountInfoHeader).toBeVisible();
@@ -140,7 +142,8 @@ class SignupAndLoginPage {
   }
 
   async createAccount() {
-    await this.createAccBtn.click();
+    await dismissBlockingAds(this.page);
+    await this.createAccBtn.evaluate((button) => button.click());
   }
   async expectAccountCreated() {
     await expect(this.accCreationConfirmationHeading).toBeVisible();
@@ -153,14 +156,16 @@ class SignupAndLoginPage {
     await expect(loggedInUser).toBeVisible();
   }
   async deleteAccount() {
-    await this.deleteAccBtn.click();
+    await dismissBlockingAds(this.page);
+    await this.deleteAccBtn.evaluate((link) => link.click());
   }
   async expectAccountDeleted() {
     await expect(this.deleteAccConfirmation).toBeVisible();
   }
 
   async clickContinueBtn() {
-    await this.continueBtn.click();
+    await dismissBlockingAds(this.page);
+    await this.continueBtn.evaluate((button) => button.click());
   }
 
   //Login methods
@@ -177,9 +182,10 @@ class SignupAndLoginPage {
     await this.loginPasswordInput.fill(loginPass);
   }
   async login(email, password) {
+    await dismissBlockingAds(this.page);
     await this.inputLoginEmail(email);
     await this.inputLoginPassword(password);
-    await this.loginBtn.click();
+    await this.loginBtn.evaluate((button) => button.click());
   }
 
   async expectUserIsLoggedIn(name) {
@@ -194,7 +200,8 @@ class SignupAndLoginPage {
   }
 
   async clickLogoutBtn() {
-    await this.logoutBtn.click();
+    await dismissBlockingAds(this.page);
+    await this.logoutBtn.evaluate((link) => link.click());
   }
 
   async expectUserIsLoggedOut() {

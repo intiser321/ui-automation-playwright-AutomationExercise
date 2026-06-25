@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class CheckoutPage {
   constructor(page) {
@@ -95,7 +96,8 @@ class CheckoutPage {
   }
 
   async clickPlaceOrder() {
-    await this.placeOrderButton.click();
+    await dismissBlockingAds(this.page);
+    await this.placeOrderButton.evaluate((link) => link.click());
   }
 }
 

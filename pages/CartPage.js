@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class CartPage {
   constructor(page) {
@@ -17,11 +18,12 @@ class CartPage {
   }
 
   async expectCartPageVisible() {
-    const cartText = this.page.getByText("Shopping Cart", { exact: true });
-    await expect(cartText).toBeVisible();
+    await this.recoverCartPageIfNeeded();
+    await expect(this.page.getByText("Shopping Cart", { exact: true })).toBeVisible();
   }
 
   async expectProductsInCart(expectedProducts) {
+    await this.recoverCartPageIfNeeded();
     await expect(this.cartTable).toBeVisible();
     await expect(this.cartRows).toHaveCount(expectedProducts.length);
 
@@ -63,7 +65,10 @@ class CartPage {
 
   async removeProductFromCart(productId) {
     const productRow = this.getProductRow(productId);
-    await productRow.locator(".cart_quantity_delete").click();
+    await dismissBlockingAds(this.page);
+    await productRow
+      .locator(".cart_quantity_delete")
+      .evaluate((removeButton) => removeButton.click());
   }
 
   async expectProductRemoved(productId) {
@@ -71,12 +76,45 @@ class CartPage {
   }
 
   async clickProceedToCheckout() {
-    await this.proceedToCheckoutButton.click();
+    await dismissBlockingAds(this.page);
+    await this.proceedToCheckoutButton.evaluate((link) => link.click());
   }
 
   async expectRegistrationModalAndClickRegistration() {
     await expect(this.registrationModal).toBeVisible();
-    await this.registrationAndLoginLink.click();
+    await dismissBlockingAds(this.page);
+    await this.registrationAndLoginLink.evaluate((link) => link.click());
+    await expect(this.page).toHaveURL(/\/login$/);
+  }
+
+  async recoverCartPageIfNeeded() {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await dismissBlockingAds(this.page);
+
+      if (await this.cartTable.isVisible({ timeout: 2_000 }).catch(() => false)) {
+        return;
+      }
+
+      const hasTransientServerError =
+        await this.page
+          .getByText(/problem with this site|500 Internal Server Error/i)
+          .isVisible({ timeout: 500 })
+          .catch(() => false);
+
+      if (!hasTransientServerError && attempt > 0) {
+        return;
+      }
+
+      if (this.page.url().includes("/view_cart")) {
+        await this.page.reload({ waitUntil: "domcontentloaded" }).catch(() => {});
+      } else {
+        await this.page
+          .goto("/view_cart", { waitUntil: "domcontentloaded" })
+          .catch(() => {});
+      }
+
+      await this.page.waitForTimeout(1_000);
+    }
   }
 }
 

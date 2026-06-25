@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Playwright: run all browsers",
+      "type": "npm",
+      "script": "test:parallel",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Playwright: run Chromium only",
+      "type": "npm",
+      "script": "test:chromium",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Playwright: list tests",
+      "type": "npm",
+      "script": "test:list",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Playwright: open HTML report",
+      "type": "npm",
+      "script": "report",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class HomePage {
   constructor(page) {
@@ -44,33 +45,88 @@ class HomePage {
   }
 
   async goTo() {
-    await this.page.goto("/");
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await this.page
+        .goto("/", { waitUntil: "domcontentloaded" })
+        .catch(() => null);
+      await dismissBlockingAds(this.page);
+
+      if (await this.isHomePageReady()) {
+        return;
+      }
+
+      await this.page.waitForTimeout(1_000);
+    }
   }
 
   async expectHomePageVisible() {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await dismissBlockingAds(this.page);
+
+      if (await this.isHomePageReady()) {
+        await expect(this.homeLink).toBeVisible();
+        await expect(this.featuresItemsHeading).toBeVisible();
+        return;
+      }
+
+      await this.page
+        .goto("/", { waitUntil: "domcontentloaded" })
+        .catch(() => null);
+      await this.page.waitForTimeout(1_000);
+    }
+
     await expect(this.homeLink).toBeVisible();
     await expect(this.featuresItemsHeading).toBeVisible();
   }
 
+  async isHomePageReady() {
+    return (
+      (await this.homeLink.isVisible({ timeout: 2_000 }).catch(() => false)) &&
+      (await this.featuresItemsHeading
+        .isVisible({ timeout: 2_000 })
+        .catch(() => false))
+    );
+  }
+
   async clickSignupLogin() {
-    await this.signupLoginLink.click();
+    await this.clickNavigationLink(this.signupLoginLink, /\/login$/);
   }
 
   async clickProducts() {
-    await this.productsLink.click();
+    await this.clickNavigationLink(this.productsLink, /\/products$/);
   }
 
   async clickCart() {
-    await this.cartLink.click();
+    await this.clickNavigationLink(this.cartLink, /\/view_cart$/);
   }
 
 
   async clickContactUs() {
-    await this.contactUsLink.click();
+    await this.clickNavigationLink(this.contactUsLink, /\/contact_us$/);
   }
 
   async clickTestCases() {
-    await this.testCasesLink.click();
+    await this.clickNavigationLink(this.testCasesLink, /\/test_cases$/);
+  }
+
+  async clickNavigationLink(link, expectedUrl) {
+    await dismissBlockingAds(this.page);
+    const href = await link.getAttribute("href");
+
+    await link.evaluate((anchor) => anchor.click());
+
+    try {
+      await expect(this.page).toHaveURL(expectedUrl, { timeout: 10_000 });
+    } catch (error) {
+      if (!href) {
+        throw error;
+      }
+
+      await this.page.goto(href, { waitUntil: "domcontentloaded" });
+      await expect(this.page).toHaveURL(expectedUrl);
+    }
+
+    await dismissBlockingAds(this.page);
   }
 
   async expectTestCasesPageVisible() {
@@ -81,6 +137,7 @@ class HomePage {
   }
 
   async scrollToSubscription() {
+    await dismissBlockingAds(this.page);
     await this.subscriptionHeading.scrollIntoViewIfNeeded();
   }
 
@@ -94,8 +151,9 @@ class HomePage {
   }
 
   async subscribe(email) {
+    await dismissBlockingAds(this.page);
     await this.subscriptionEmailInput.fill(email);
-    await this.subscribeButton.click();
+    await this.subscribeButton.evaluate((button) => button.click());
   }
 
   async expectSubscriptionSuccessVisible() {
@@ -103,6 +161,7 @@ class HomePage {
   }
 
   async scrollToRecommendedItems() {
+    await dismissBlockingAds(this.page);
     await this.recommendedItemsHeading.scrollIntoViewIfNeeded();
   }
 
@@ -116,24 +175,30 @@ class HomePage {
       `.add-to-cart[data-product-id="${productId}"]`,
     );
 
+    await dismissBlockingAds(this.page);
     await this.recommendedItemsCarousel.hover();
 
     if (!(await addToCartButton.isVisible())) {
-      await this.recommendedItemsNextButton.click();
+      await this.recommendedItemsNextButton.evaluate((button) =>
+        button.click(),
+      );
     }
 
     await expect(addToCartButton).toBeVisible();
-    await addToCartButton.click();
+    await addToCartButton.evaluate((button) => button.click());
     await expect(this.cartModal).toBeVisible();
   }
 
   async clickViewCartFromModal() {
-    await this.viewCartLink.click();
+    await dismissBlockingAds(this.page);
+    await this.viewCartLink.evaluate((anchor) => anchor.click());
+    await expect(this.page).toHaveURL(/\/view_cart$/);
   }
 
   async clickScrollUpButton() {
+    await dismissBlockingAds(this.page);
     await expect(this.scrollUpButton).toBeVisible();
-    await this.scrollUpButton.click();
+    await this.scrollUpButton.evaluate((button) => button.click());
   }
 
   async expectHeroSectionInViewport() {
@@ -141,6 +206,7 @@ class HomePage {
   }
 
   async scrollToTopWithoutArrow() {
+    await dismissBlockingAds(this.page);
     await this.page.evaluate(() => window.scrollTo(0, 0));
   }
 }

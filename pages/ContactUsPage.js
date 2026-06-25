@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class ContactUsPage {
   constructor(page) {
@@ -40,6 +41,7 @@ class ContactUsPage {
     await this.uploadFileField.setInputFiles(filepath);
   }
   async submitAndAcceptDialog() {
+    await dismissBlockingAds(this.page);
     const dialogHandled = new Promise((resolve, reject) => {
       this.page.once("dialog", (dialog) => {       //listner for the confirmation dialog
         try {
@@ -52,7 +54,7 @@ class ContactUsPage {
       });
     });
 
-    await this.submitBtn.click();
+    await this.submitBtn.evaluate((button) => button.click());
     await dialogHandled;
   }
 
@@ -60,7 +62,9 @@ class ContactUsPage {
     await expect(this.successMessage).toBeVisible();
   }
   async clickHomeBtn() {
-    await this.homeBtn.click();
+    await dismissBlockingAds(this.page);
+    await this.homeBtn.evaluate((link) => link.click());
+    await expect(this.page).toHaveURL("/");
   }
   async expectRedirectedToHomePage() {
     await expect(this.page).toHaveURL("/");

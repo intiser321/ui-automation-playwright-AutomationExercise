@@ -1,6 +1,16 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
 
+const DEFAULT_CI_WORKERS = 3;
+const configuredCiWorkers = Number.parseInt(
+  process.env.PLAYWRIGHT_WORKERS ?? `${DEFAULT_CI_WORKERS}`,
+  10
+);
+const ciWorkers = Number.isNaN(configuredCiWorkers)
+  ? DEFAULT_CI_WORKERS
+  : Math.max(1, configuredCiWorkers);
+const isListingTests = process.argv.includes('--list');
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -24,12 +34,16 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* Run CI in controlled parallel mode. Override with PLAYWRIGHT_WORKERS if needed. */
+  workers: process.env.CI ? ciWorkers : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['allure-playwright', { outputFolder: 'allure-results', detail: true }],
+    ...(
+      isListingTests
+        ? []
+        : [['allure-playwright', { outputFolder: 'allure-results', detail: true }]]
+    ),
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {

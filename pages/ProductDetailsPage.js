@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class ProductDetailsPage {
   constructor(page) {
@@ -55,7 +56,8 @@ class ProductDetailsPage {
   }
 
   async clickAddToCartBtn() {
-    await this.addToCartBtn.click();
+    await dismissBlockingAds(this.page);
+    await this.addToCartBtn.evaluate((button) => button.click());
     await expect(this.cartModal).toBeVisible();
   }
 
@@ -67,10 +69,11 @@ class ProductDetailsPage {
   }
 
   async submitReview(review) {
+    await dismissBlockingAds(this.page);
     await this.reviewNameInput.fill(review.name);
     await this.reviewEmailInput.fill(review.email);
     await this.reviewTextInput.fill(review.message);
-    await this.submitReviewButton.click();
+    await this.submitReviewButton.evaluate((button) => button.click());
   }
 
   async expectReviewSubmittedSuccessfully() {

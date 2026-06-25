@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class BrandPage {
   constructor(page) {
@@ -20,7 +21,10 @@ class BrandPage {
     const brandLink = this.brandsSection.locator(`a[href="${brand.path}"]`);
 
     await expect(brandLink).toContainText(brand.name);
-    await brandLink.click();
+    await dismissBlockingAds(this.page);
+    await brandLink.evaluate((link) => link.click());
+    await expect(this.page).toHaveURL(new RegExp(`${brand.path}$`));
+    await dismissBlockingAds(this.page);
   }
 
   async expectBrandProductsVisible(brand) {

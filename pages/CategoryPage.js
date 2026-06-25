@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { dismissBlockingAds } from "../utils/adHandler";
 
 class CategoryPage {
   constructor(page) {
@@ -20,7 +21,8 @@ class CategoryPage {
     const categoryToggle = this.page.locator(`a[href="#${categoryName}"]`);
     const categoryPanel = this.getCategoryPanel(categoryName);
 
-    await categoryToggle.click();
+    await dismissBlockingAds(this.page);
+    await categoryToggle.evaluate((link) => link.click());
     await expect(categoryPanel).toBeVisible();
   }
 
@@ -31,7 +33,12 @@ class CategoryPage {
     );
 
     await expect(subcategoryLink).toContainText(category.subcategory);
-    await subcategoryLink.click();
+    await dismissBlockingAds(this.page);
+    await subcategoryLink.evaluate((link) => link.click());
+    await expect(this.page).toHaveURL(
+      new RegExp(`/category_products/${category.id}$`),
+    );
+    await dismissBlockingAds(this.page);
   }
 
   async expectCategoryProductsVisible(category) {

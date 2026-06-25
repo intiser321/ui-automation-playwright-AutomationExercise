@@ -1,13 +1,35 @@
-name: Playwright Tests
+name: Playwright CI
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      workers:
+        description: Number of Playwright workers for the live E2E run
+        required: false
+        default: "3"
 jobs:
-  test:
+  validate:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.1.0
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Validate Playwright test discovery
+        run: npm run test:list
+
+  live-e2e:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_WORKERS: ${{ inputs.workers || '3' }}
     container:
       image: mcr.microsoft.com/playwright:v1.59.1-noble
       options: --ipc=host

@@ -7,5 +7,6 @@ node_modules/
 /allure-results/
 /allure-report/
 /.tmp/
+/last-test-run.log
 /playwright/.cache/
 /playwright/.auth/

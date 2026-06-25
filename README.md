@@ -94,7 +94,9 @@ On Windows, double-click:
 run-tests.cmd
 ```
 
-The runner installs dependencies if needed, ensures Playwright browsers are available, runs the full cross-browser suite in headed mode, and offers to open the HTML report when the run finishes.
+The runner performs a clean dependency install from `package-lock.json`, ensures Playwright browsers are available, runs the full cross-browser suite in headed mode, saves console output to `last-test-run.log`, and offers to open the HTML report when the run finishes.
+
+If you share the project with someone else, share the GitHub repository or a zip without `node_modules`. The runner will install dependencies for their machine. Copying `node_modules` from another computer can cause every test to fail immediately because browser automation packages and cached binaries may not match the new machine.
 
 If you use VS Code, you can also run the suite without typing commands:
 
@@ -137,6 +139,18 @@ npm run test:list
 ```
 
 > **Windows PowerShell:** If script execution policy blocks `npm.ps1`, use `npm.cmd` instead, for example `npm.cmd run test:chromium`, or run the commands from Command Prompt.
+
+### If every test fails immediately
+
+If the HTML report shows all tests failing in only a few seconds, it usually means the environment setup failed before the UI steps started. Run these from the project root, or just double-click `run-tests.cmd`:
+
+```bash
+npm ci
+npm run browsers:install
+npm run test:headed
+```
+
+Also make sure Node.js is installed, the machine has internet access, and the project was not copied with an old `node_modules` folder.
 
 ## Test reports and debugging
 

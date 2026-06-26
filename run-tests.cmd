@@ -1,7 +1,29 @@
 @echo off
-setlocal
+setlocal EnableExtensions
 
-cd /d "%~dp0"
+cd /d "%~dp0" || (
+  echo Unable to open the project folder.
+  echo Please extract the project to a normal folder, then run this file again.
+  echo.
+  pause
+  exit /b 1
+)
+
+call :main
+set TEST_EXIT_CODE=%ERRORLEVEL%
+
+echo.
+if "%TEST_EXIT_CODE%"=="0" (
+  echo Runner finished.
+) else (
+  echo Runner stopped with exit code %TEST_EXIT_CODE%.
+)
+
+echo.
+pause
+exit /b %TEST_EXIT_CODE%
+
+:main
 
 echo.
 echo ===============================================
@@ -14,7 +36,6 @@ if errorlevel 1 (
   echo npm was not found. Please install Node.js first:
   echo https://nodejs.org/
   echo.
-  pause
   exit /b 1
 )
 
@@ -30,7 +51,6 @@ call npm.cmd ci
 if errorlevel 1 (
   echo.
   echo Dependency installation failed.
-  pause
   exit /b 1
 )
 echo.
@@ -40,7 +60,6 @@ call npm.cmd run browsers:install
 if errorlevel 1 (
   echo.
   echo Browser installation failed.
-  pause
   exit /b 1
 )
 
@@ -64,6 +83,4 @@ if errorlevel 2 goto done
 call npm.cmd run report
 
 :done
-echo.
-pause
 exit /b %TEST_EXIT_CODE%

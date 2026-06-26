@@ -100,19 +100,19 @@ npm -v
 On Windows, double-click:
 
 ```text
-run-tests.cmd
+run-tests.bat
 ```
 
-The runner performs a clean dependency install from `package-lock.json`, ensures Playwright browsers are available, runs the full cross-browser suite in headed mode, saves console output to `last-test-run.log`, and offers to open the HTML report when the run finishes.
+The batch launcher runs `run-tests.cmd`, which performs a clean dependency install from `package-lock.json`, ensures Playwright browsers are available, runs the full cross-browser suite in headed mode, saves console output to `last-test-run.log`, and offers to open the HTML report when the run finishes.
 
-If you share the project with someone else, share the GitHub repository or a zip without `node_modules`. Ask them to extract the zip before running `run-tests.cmd`. The runner will install dependencies for their machine. Copying `node_modules` from another computer can cause every test to fail immediately because browser automation packages and cached binaries may not match the new machine.
+If you share the project with someone else, share the GitHub repository or a zip without `node_modules`. Ask them to extract the zip before running `run-tests.bat`. The runner will install dependencies for their machine. Copying `node_modules` from another computer can cause every test to fail immediately because browser automation packages and cached binaries may not match the new machine.
 
-If the runner says `npm was not found`, install Node.js from [nodejs.org](https://nodejs.org/), close and reopen the terminal or folder window, then run `run-tests.cmd` again.
+If the runner says `npm was not found`, install Node.js from [nodejs.org](https://nodejs.org/), close and reopen the terminal or folder window, then run `run-tests.bat` again.
 
 If the command window opens and closes too quickly to read, open Command Prompt in the extracted project folder and run:
 
 ```cmd
-run-tests.cmd
+run-tests.bat
 ```
 
 If you use VS Code, you can also run the suite without typing commands:

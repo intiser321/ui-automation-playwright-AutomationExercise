@@ -42,7 +42,7 @@ if errorlevel 1 (
 echo Node version:
 node -v
 echo npm version:
-npm.cmd -v
+call npm.cmd -v
 echo.
 
 echo Installing project dependencies from package-lock.json...
